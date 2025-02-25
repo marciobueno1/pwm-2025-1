@@ -1,0 +1,8 @@
+table {
+  width: 500px;
+  border: dashed;
+}
+
+td {
+  border: solid;
+}
