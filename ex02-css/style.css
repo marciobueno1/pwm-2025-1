@@ -1,8 +1,27 @@
 table {
+  border-style: solid;
+  border-width: 10px;
+  border-color: yellowgreen;
+  background-color: beige;
   width: 500px;
-  border: dashed;
 }
 
 td {
   border: solid;
+}
+
+table:hover {
+  border: double;
+  border-color: blueviolet;
+}
+
+.tblNum {
+  border-color: aqua;
+  width: 300px;
+}
+
+.tblDados {
+  border-style: groove;
+  border-width: 5px;
+  border-color: red;
 }
