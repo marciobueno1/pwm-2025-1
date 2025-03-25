@@ -22,6 +22,7 @@ function App() {
     const novaTarefa = await addTarefa({ descricao, concluida: false });
     if (novaTarefa != null) {
       console.log("novaTarefa", novaTarefa);
+      setDescricao("");
       await carregarTarefas();
     }
   }
