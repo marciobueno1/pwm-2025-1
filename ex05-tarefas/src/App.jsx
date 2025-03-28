@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Cabecalho } from "./components/Cabecalho";
-import { addTarefa, getTarefas } from "./api";
+import { addTarefa, deleteTarefa, getTarefas, updateTarefa } from "./api";
 import { Tarefa } from "./components/Tarefa";
 // import './App.css'
 
@@ -27,6 +27,25 @@ function App() {
     }
   }
 
+  const handleOnUpdateClick = async (tarefa) => {
+    tarefa.concluida = !tarefa.concluida;
+    const tarefaAtualizada = await updateTarefa(tarefa);
+    console.log("tarefaAtualizada", tarefaAtualizada);
+    if (tarefaAtualizada) {
+      carregarTarefas();
+    }
+  };
+
+  const handleOnDeleteClick = async (tarefa) => {
+    const tarefaRemovida = await deleteTarefa(tarefa);
+    console.log("tarefaRemovida", tarefaRemovida);
+    if (tarefaRemovida) {
+      carregarTarefas();
+    } else {
+      alert("Não pode remover a tarefa");
+    }
+  };
+
   useEffect(() => {
     carregarTarefas();
   }, []);
@@ -43,7 +62,12 @@ function App() {
       </p>
       <ul>
         {tarefas.map((tarefa) => (
-          <Tarefa key={tarefa.objectId} tarefa={tarefa} />
+          <Tarefa
+            key={tarefa.objectId}
+            tarefa={tarefa}
+            onUpdateClick={() => handleOnUpdateClick(tarefa)}
+            onDeleteClick={() => handleOnDeleteClick(tarefa)}
+          />
         ))}
       </ul>
     </>

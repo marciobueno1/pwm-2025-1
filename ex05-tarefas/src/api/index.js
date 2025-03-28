@@ -17,8 +17,8 @@ export async function getTarefas() {
       console.log("tarefas", response.data.results);
       return response.data.results;
     } else {
-      console.log("status:", response.status);
-      console.log("statusText:", response.statusText);
+      console.log("getTarefas status:", response.status);
+      console.log("getTarefas statusText:", response.statusText);
     }
   } catch (err) {
     console.log("getTarefas err:", err);
@@ -34,11 +34,52 @@ export async function addTarefa(novaTarefa) {
     if (response.status === 201) {
       return { ...novaTarefa, ...response.data };
     } else {
-      console.log("status:", response.status);
-      console.log("statusText:", response.statusText);
+      console.log("addTarefa status:", response.status);
+      console.log("addTarefa statusText:", response.statusText);
     }
   } catch (err) {
-    console.log("addTarefas err:", err);
+    console.log("addTarefa err:", err);
+  }
+  return null;
+}
+
+export async function updateTarefa(tarefaAtualizada) {
+  delete tarefaAtualizada.createdAt;
+  delete tarefaAtualizada.updatedAt;
+  try {
+    const response = await axios.put(
+      //urlTarefa + "/" + tarefaAtualizada.objectId,
+      `${urlTarefa}/${tarefaAtualizada.objectId}`,
+      tarefaAtualizada,
+      {
+        headers: headersJson,
+      }
+    );
+    if (response.status === 200) {
+      return { ...tarefaAtualizada, ...response.data };
+    } else {
+      console.log("updateTarefa status:", response.status);
+      console.log("updateTarefa statusText:", response.statusText);
+    }
+  } catch (err) {
+    console.log("updateTarefa err:", err);
+  }
+  return null;
+}
+
+export async function deleteTarefa(tarefa) {
+  try {
+    const response = await axios.delete(`${urlTarefa}/${tarefa.objectId}`, {
+      headers: headers,
+    });
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      console.log("deleteTarefa status:", response.status);
+      console.log("deleteTarefa statusText:", response.statusText);
+    }
+  } catch (err) {
+    console.log("deleteTarefa err:", err);
   }
   return null;
 }
