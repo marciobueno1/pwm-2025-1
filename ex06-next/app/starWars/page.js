@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Cabecalho } from "@/components/Cabecalho";
 import Link from "next/link";
 
@@ -28,6 +28,10 @@ function StarWarsPage() {
     }
   }
 
+  useEffect(() => {
+    carregar(urlStarWars);
+  }, []);
+
   function handleBtCarregarClick() {
     carregar(urlStarWars);
   }
@@ -41,7 +45,6 @@ function StarWarsPage() {
   }
 
   function extractID(personagem) {
-    console.log("id = ", personagem.url.split("/")[5]);
     return personagem.url.split("/")[5];
   }
 
