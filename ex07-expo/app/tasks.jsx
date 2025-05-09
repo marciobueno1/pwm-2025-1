@@ -1,16 +1,38 @@
 import React, { useEffect, useState } from "react";
 import { addTarefa, deleteTarefa, getTarefas, updateTarefa } from "@/api";
 import { Tarefa } from "@/components/Tarefa";
-import { Button, ScrollView, TextInput, View } from "react-native";
+import {
+  Button,
+  FlatList,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export default function Tasks() {
-  const [tarefas, setTarefas] = useState([]);
   const [descricao, setDescricao] = useState("");
 
-  async function carregarTarefas() {
-    const tarefasTemp = await getTarefas();
-    setTarefas(tarefasTemp);
-  }
+  const queryClient = useQueryClient();
+  const { isPending, error, data } = useQuery({
+    queryKey: ["tarefas"],
+    queryFn: getTarefas,
+  });
+  const addMutation = useMutation({
+    mutationFn: addTarefa,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["tarefas"],
+      });
+      setDescricao("");
+    },
+  });
+
+  console.log("isPending", isPending);
+  console.log("error", error);
+  console.log("data", data);
+  console.log("----------------------------------------------------------");
 
   async function adicionarTarefa() {
     if (!descricao.trim()) {
@@ -18,12 +40,7 @@ export default function Tasks() {
       return;
     }
 
-    const novaTarefa = await addTarefa({ descricao, concluida: false });
-    if (novaTarefa != null) {
-      console.log("novaTarefa", novaTarefa);
-      setDescricao("");
-      await carregarTarefas();
-    }
+    addMutation.mutate({ descricao, concluida: false });
   }
 
   const handleOnUpdateClick = async (tarefa) => {
@@ -31,7 +48,7 @@ export default function Tasks() {
     const tarefaAtualizada = await updateTarefa(tarefa);
     console.log("tarefaAtualizada", tarefaAtualizada);
     if (tarefaAtualizada) {
-      carregarTarefas();
+      // carregarTarefas();
     }
   };
 
@@ -39,30 +56,40 @@ export default function Tasks() {
     const tarefaRemovida = await deleteTarefa(tarefa);
     console.log("tarefaRemovida", tarefaRemovida);
     if (tarefaRemovida) {
-      carregarTarefas();
+      // carregarTarefas();
     } else {
       alert("Não pode remover a tarefa");
     }
   };
 
-  useEffect(() => {
-    carregarTarefas();
-  }, []);
-
   return (
-    <ScrollView>
+    <View style={styles.container}>
       <View>
-        <TextInput value={descricao} onChangeText={setDescricao} />
+        <TextInput
+          value={descricao}
+          onChangeText={setDescricao}
+          placeholder="Digite a descrição na nova tarefa"
+        />
         <Button onPress={adicionarTarefa} title="Adicionar" />
       </View>
-      {tarefas.map((tarefa) => (
-        <Tarefa
-          key={tarefa.objectId}
-          tarefa={tarefa}
-          onUpdateClick={() => handleOnUpdateClick(tarefa)}
-          onDeleteClick={() => handleOnDeleteClick(tarefa)}
-        />
-      ))}
-    </ScrollView>
+      {!!error && <Text>Erro: {error.message}</Text>}
+      <FlatList
+        data={data}
+        renderItem={({ item }) => (
+          <Tarefa
+            tarefa={item}
+            onUpdateClick={() => handleOnUpdateClick(item)}
+            onDeleteClick={() => handleOnDeleteClick(item)}
+          />
+        )}
+        keyExtractor={(item) => item.objectId}
+      />
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    paddingBottom: 80,
+  },
+});

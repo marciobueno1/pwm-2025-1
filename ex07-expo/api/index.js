@@ -3,7 +3,7 @@ import axios from "axios";
 const urlTarefa = "https://parseapi.back4app.com/classes/Tarefa";
 const headers = {
   "X-Parse-Application-Id": "TqPX0HAUUB9cQHxXfEf5MxvVXCPNd7ZT1ZrAalFl",
-  "X-Parse-REST-API-Key": "gDdNMhyHIiQXPHdY1oYD2HN2zRABOnKCqpoXlYJZ",
+  "X-Parse-JavaScript-Key": "4baJyrMFzvH8CSg5Q6yA5OBKbibjoJUxdGCSEGTm",
 };
 const headersJson = {
   ...headers,
@@ -11,36 +11,14 @@ const headersJson = {
 };
 
 export async function getTarefas() {
-  try {
-    const response = await axios.get(urlTarefa, { headers: headers });
-    if (response.status / 100 === 2) {
-      console.log("tarefas", response.data.results);
-      return response.data.results;
-    } else {
-      console.log("getTarefas status:", response.status);
-      console.log("getTarefas statusText:", response.statusText);
-    }
-  } catch (err) {
-    console.log("getTarefas err:", err);
-  }
-  return [];
+  const response = await axios.get(urlTarefa, { headers: headers });
+  return response.data.results;
 }
 
 export async function addTarefa(novaTarefa) {
-  try {
-    const response = await axios.post(urlTarefa, novaTarefa, {
-      headers: headersJson,
-    });
-    if (response.status === 201) {
-      return { ...novaTarefa, ...response.data };
-    } else {
-      console.log("addTarefa status:", response.status);
-      console.log("addTarefa statusText:", response.statusText);
-    }
-  } catch (err) {
-    console.log("addTarefa err:", err);
-  }
-  return null;
+  return axios.post(urlTarefa, novaTarefa, {
+    headers: headersJson,
+  });
 }
 
 export async function updateTarefa(tarefaAtualizada) {
