@@ -19,6 +19,7 @@ export default function Tasks() {
     queryKey: ["tarefas"],
     queryFn: getTarefas,
   });
+
   const addMutation = useMutation({
     mutationFn: addTarefa,
     onSuccess: () => {
@@ -47,21 +48,16 @@ export default function Tasks() {
     },
   });
 
-  console.log("isPending", isPending);
-  console.log("error", error);
-  console.log("data", data);
-  console.log("----------------------------------------------------------");
-
-  async function adicionarTarefa() {
+  const adicionarTarefa = () => {
     if (!descricao.trim()) {
       alert("Preencha o campo descrição");
       return;
     }
 
     addMutation.mutate({ descricao, concluida: false });
-  }
+  };
 
-  const handleOnUpdateClick = async (tarefa) => {
+  const handleOnUpdateClick = (tarefa) => {
     updateMutation.mutate({
       objectId: tarefa.objectId,
       concluida: !tarefa.concluida,
