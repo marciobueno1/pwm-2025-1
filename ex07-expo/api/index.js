@@ -22,42 +22,18 @@ export async function addTarefa(novaTarefa) {
 }
 
 export async function updateTarefa(tarefaAtualizada) {
-  delete tarefaAtualizada.createdAt;
-  delete tarefaAtualizada.updatedAt;
-  try {
-    const response = await axios.put(
-      //urlTarefa + "/" + tarefaAtualizada.objectId,
-      `${urlTarefa}/${tarefaAtualizada.objectId}`,
-      tarefaAtualizada,
-      {
-        headers: headersJson,
-      }
-    );
-    if (response.status === 200) {
-      return { ...tarefaAtualizada, ...response.data };
-    } else {
-      console.log("updateTarefa status:", response.status);
-      console.log("updateTarefa statusText:", response.statusText);
+  return axios.put(
+    `${urlTarefa}/${tarefaAtualizada.objectId}`,
+    tarefaAtualizada,
+    {
+      headers: headersJson,
     }
-  } catch (err) {
-    console.log("updateTarefa err:", err);
-  }
-  return null;
+  );
 }
 
-export async function deleteTarefa(tarefa) {
-  try {
-    const response = await axios.delete(`${urlTarefa}/${tarefa.objectId}`, {
-      headers: headers,
-    });
-    if (response.status === 200) {
-      return response.data;
-    } else {
-      console.log("deleteTarefa status:", response.status);
-      console.log("deleteTarefa statusText:", response.statusText);
-    }
-  } catch (err) {
-    console.log("deleteTarefa err:", err);
-  }
-  return null;
-}
+// usando a notação arrow function
+// usando a forma compacta quando o único comando é apenas um return
+export const deleteTarefa = (tarefa) =>
+  axios.delete(`${urlTarefa}/${tarefa.objectId}`, {
+    headers: headers,
+  });

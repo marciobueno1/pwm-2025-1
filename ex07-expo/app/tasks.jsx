@@ -29,6 +29,24 @@ export default function Tasks() {
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: updateTarefa,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["tarefas"],
+      });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: deleteTarefa,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["tarefas"],
+      });
+    },
+  });
+
   console.log("isPending", isPending);
   console.log("error", error);
   console.log("data", data);
@@ -44,22 +62,14 @@ export default function Tasks() {
   }
 
   const handleOnUpdateClick = async (tarefa) => {
-    tarefa.concluida = !tarefa.concluida;
-    const tarefaAtualizada = await updateTarefa(tarefa);
-    console.log("tarefaAtualizada", tarefaAtualizada);
-    if (tarefaAtualizada) {
-      // carregarTarefas();
-    }
+    updateMutation.mutate({
+      objectId: tarefa.objectId,
+      concluida: !tarefa.concluida,
+    });
   };
 
   const handleOnDeleteClick = async (tarefa) => {
-    const tarefaRemovida = await deleteTarefa(tarefa);
-    console.log("tarefaRemovida", tarefaRemovida);
-    if (tarefaRemovida) {
-      // carregarTarefas();
-    } else {
-      alert("Não pode remover a tarefa");
-    }
+    deleteMutation.mutate(tarefa);
   };
 
   return (
